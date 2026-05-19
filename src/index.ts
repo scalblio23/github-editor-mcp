@@ -64,7 +64,7 @@ const server = new McpServer({
 // ─── Tool: list_files ─────────────────────────────────────────────────────────
 
 server.tool(
-  "list_files",
+  "github_list_files",
   "List files and directories in a repository path. Returns file names, types, and sizes.",
   {
     path: z.string().default("").describe("Directory path to list (empty for root)"),
@@ -105,7 +105,7 @@ server.tool(
 // ─── Tool: read_file ──────────────────────────────────────────────────────────
 
 server.tool(
-  "read_file",
+  "github_read_file",
   "Read the contents of a file from the repository. Returns the full file content as text.",
   {
     path: z.string().describe("File path relative to repository root (e.g., 'src/App.tsx')"),
@@ -144,7 +144,7 @@ server.tool(
 // ─── Tool: write_file ─────────────────────────────────────────────────────────
 
 server.tool(
-  "write_file",
+  "github_write_file",
   "Create or update a file in the repository. Automatically commits the change. If the file exists, it will be updated; if not, it will be created.",
   {
     path: z.string().describe("File path relative to repository root (e.g., 'src/App.tsx')"),
@@ -199,7 +199,7 @@ server.tool(
 // ─── Tool: delete_file ────────────────────────────────────────────────────────
 
 server.tool(
-  "delete_file",
+  "github_delete_file",
   "Delete a file from the repository. Automatically commits the deletion.",
   {
     path: z.string().describe("File path to delete"),
@@ -244,7 +244,7 @@ server.tool(
 // ─── Tool: search_code ────────────────────────────────────────────────────────
 
 server.tool(
-  "search_code",
+  "github_search_code",
   "Search for code across the repository. Finds files containing specific text or patterns.",
   {
     query: z.string().describe("Search query (code text to find)"),
@@ -282,7 +282,7 @@ server.tool(
 // ─── Tool: list_commits ───────────────────────────────────────────────────────
 
 server.tool(
-  "list_commits",
+  "github_list_commits",
   "List recent commits on the repository. Shows commit messages, authors, and dates.",
   {
     count: z.number().default(10).describe("Number of commits to return (max 30)"),
@@ -324,7 +324,7 @@ server.tool(
 // ─── Tool: get_file_tree ──────────────────────────────────────────────────────
 
 server.tool(
-  "get_file_tree",
+  "github_get_file_tree",
   "Get the complete file tree of the repository. Returns all files and directories recursively.",
   {
     owner: z.string().optional().describe("Repository owner"),
@@ -361,7 +361,7 @@ server.tool(
 // ─── Tool: create_branch ──────────────────────────────────────────────────────
 
 server.tool(
-  "create_branch",
+  "github_create_branch",
   "Create a new branch from the current main branch. Useful for making changes safely before merging.",
   {
     branch_name: z.string().describe("Name for the new branch (e.g., 'fix/login-bug')"),
@@ -404,7 +404,7 @@ server.tool(
 // ─── Tool: get_diff ───────────────────────────────────────────────────────────
 
 server.tool(
-  "get_diff",
+  "github_get_diff",
   "Compare two branches or commits and show the differences. Useful for reviewing changes before merging.",
   {
     base: z.string().describe("Base branch or commit SHA"),
@@ -505,7 +505,7 @@ app.post("/mcp", async (req, res) => {
     } else if (method === "tools/list") {
       const tools = [
         {
-          name: "list_files",
+          name: "github_list_files",
           description: "List files and directories in a repository path. Returns file names, types, and sizes.",
           inputSchema: {
             type: "object",
@@ -518,7 +518,7 @@ app.post("/mcp", async (req, res) => {
           },
         },
         {
-          name: "read_file",
+          name: "github_read_file",
           description: "Read the contents of a file from the repository. Returns the full file content as text.",
           inputSchema: {
             type: "object",
@@ -532,7 +532,7 @@ app.post("/mcp", async (req, res) => {
           },
         },
         {
-          name: "write_file",
+          name: "github_write_file",
           description: "Create or update a file in the repository. Automatically commits the change.",
           inputSchema: {
             type: "object",
@@ -548,7 +548,7 @@ app.post("/mcp", async (req, res) => {
           },
         },
         {
-          name: "delete_file",
+          name: "github_delete_file",
           description: "Delete a file from the repository. Automatically commits the deletion.",
           inputSchema: {
             type: "object",
@@ -563,7 +563,7 @@ app.post("/mcp", async (req, res) => {
           },
         },
         {
-          name: "search_code",
+          name: "github_search_code",
           description: "Search for code across the repository. Finds files containing specific text.",
           inputSchema: {
             type: "object",
@@ -576,7 +576,7 @@ app.post("/mcp", async (req, res) => {
           },
         },
         {
-          name: "list_commits",
+          name: "github_list_commits",
           description: "List recent commits on the repository. Shows commit messages, authors, and dates.",
           inputSchema: {
             type: "object",
@@ -590,7 +590,7 @@ app.post("/mcp", async (req, res) => {
           },
         },
         {
-          name: "get_file_tree",
+          name: "github_get_file_tree",
           description: "Get the complete file tree of the repository. Returns all files and directories recursively.",
           inputSchema: {
             type: "object",
@@ -602,7 +602,7 @@ app.post("/mcp", async (req, res) => {
           },
         },
         {
-          name: "create_branch",
+          name: "github_create_branch",
           description: "Create a new branch from the current main branch. Useful for safe changes.",
           inputSchema: {
             type: "object",
@@ -616,7 +616,7 @@ app.post("/mcp", async (req, res) => {
           },
         },
         {
-          name: "get_diff",
+          name: "github_get_diff",
           description: "Compare two branches or commits and show the differences.",
           inputSchema: {
             type: "object",
@@ -647,7 +647,7 @@ app.post("/mcp", async (req, res) => {
 
       try {
         switch (toolName) {
-          case "list_files": {
+          case "github_list_files": {
             const path = args.path || "";
             const data = await githubRequest(`/repos/${o}/${r}/contents/${path}?ref=${b}`);
             const items = Array.isArray(data) ? data : [data];
@@ -660,7 +660,7 @@ app.post("/mcp", async (req, res) => {
             resultText = JSON.stringify(listing, null, 2);
             break;
           }
-          case "read_file": {
+          case "github_read_file": {
             const data = await githubRequest(`/repos/${o}/${r}/contents/${args.path}?ref=${b}`);
             if (data.type !== "file") {
               resultText = `Error: ${args.path} is a ${data.type}, not a file`;
@@ -669,7 +669,7 @@ app.post("/mcp", async (req, res) => {
             }
             break;
           }
-          case "write_file": {
+          case "github_write_file": {
             let sha: string | undefined;
             try {
               const existing = await githubRequest(`/repos/${o}/${r}/contents/${args.path}?ref=${b}`);
@@ -688,7 +688,7 @@ app.post("/mcp", async (req, res) => {
             resultText = `✅ File ${sha ? "updated" : "created"}: ${args.path}\nCommit: ${result.commit.sha}\nMessage: ${body.message}`;
             break;
           }
-          case "delete_file": {
+          case "github_delete_file": {
             const existing = await githubRequest(`/repos/${o}/${r}/contents/${args.path}?ref=${b}`);
             await githubRequest(`/repos/${o}/${r}/contents/${args.path}`, {
               method: "DELETE",
@@ -701,7 +701,7 @@ app.post("/mcp", async (req, res) => {
             resultText = `✅ File deleted: ${args.path}`;
             break;
           }
-          case "search_code": {
+          case "github_search_code": {
             const data = await githubRequest(
               `/search/code?q=${encodeURIComponent(args.query)}+repo:${o}/${r}`
             );
@@ -712,7 +712,7 @@ app.post("/mcp", async (req, res) => {
             resultText = `Found ${data.total_count} results:\n${JSON.stringify(results, null, 2)}`;
             break;
           }
-          case "list_commits": {
+          case "github_list_commits": {
             const count = Math.min(args.count || 10, 30);
             let endpoint = `/repos/${o}/${r}/commits?sha=${b}&per_page=${count}`;
             if (args.path) endpoint += `&path=${encodeURIComponent(args.path)}`;
@@ -726,7 +726,7 @@ app.post("/mcp", async (req, res) => {
             resultText = JSON.stringify(commits, null, 2);
             break;
           }
-          case "get_file_tree": {
+          case "github_get_file_tree": {
             const data = await githubRequest(`/repos/${o}/${r}/git/trees/${b}?recursive=1`);
             const tree = data.tree
               .filter((item: any) => item.type === "blob")
@@ -734,7 +734,7 @@ app.post("/mcp", async (req, res) => {
             resultText = `Repository file tree (${tree.length} files):\n${tree.join("\n")}`;
             break;
           }
-          case "create_branch": {
+          case "github_create_branch": {
             const fromBranch = args.from_branch || "main";
             const ref = await githubRequest(`/repos/${o}/${r}/git/ref/heads/${fromBranch}`);
             await githubRequest(`/repos/${o}/${r}/git/refs`, {
@@ -747,7 +747,7 @@ app.post("/mcp", async (req, res) => {
             resultText = `✅ Branch created: ${args.branch_name} (from ${fromBranch})`;
             break;
           }
-          case "get_diff": {
+          case "github_get_diff": {
             const data = await githubRequest(`/repos/${o}/${r}/compare/${args.base}...${args.head}`);
             const summary = {
               status: data.status,
